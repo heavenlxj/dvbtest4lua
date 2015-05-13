@@ -1,68 +1,68 @@
-This plugin is based on the Lua script which supported by Wireshark, it allows decoding of KMS traffic over various interfaces.
+This plugin is based on the Lua script which supported by Wireshark, it allows decoding of DVB traffic over various interfaces.
 
 The following listed the description of the lua files:
 
-# bitlib.lua & bitop.lua
+- bitlib.lua & bitop.lua
 
 Provides the bit operation function for dissector function.
 
-# cam.lua
+- cam.lua
 
 Decode CAM message according to CCP CAM Message system specification
 
-# config.la
+- config.lua
 
 The configuration file for the decoder plugin, not used yet. you can add the customized configutation for the plugin.
 
-# descriptors.lua
+- descriptors.lua
 
 SI descriptor lib, refer to the DVB_SI_spec_ETSI_EN_300468
 
-# dvb.lua (DVB Simulcrypt)
+- dvb.lua (DVB Simulcrypt)
 
 DVB interface, refer to "DVB Simulcrypt ts_103197v010401p.pdf"
 
-# emmh.lua
+- emmh.lua
 
 EMM Header interface
 
-# err_info.lua
+- err_info.lua
 
 Error Info definition for Error_Status
 
-# filter.lua
+- filter.lua
 
 Search filter for msp, dvbs, si message.
 
-# gui.lua
+- gui.lua
 
 Gui interface for port registration and configuration.
 
-# ird.lua
+- ird.lua
 
 Decodes IRD message according to 705410_CCP IRD Messages desgin
 
-# metadata.lua
+- metadata.lua
 
 Metadata inferface
 
-# msp.lua
+- msp.lua
 
 MSP interface, refer to key server specification
 
-# opcodes.lua
+- opcodes.lua
 
 Decodes parts of CCP opcodes
 
-# port.lua
+- port.lua
 
 Registration for port listening
 
-# section.lua
+- section.lua
 
 Section Message interface
 
-# si.lua
+- si.lua
 
 SI Message Interface
 
@@ -74,13 +74,13 @@ SI Message Interface
      2.  Exeute the 'load_plugin.bat' and wait for the setup completed, all the files should be copied to your wireshark installation folder, the plugin\lua 	folder should be created. 
      3.  Launch wireshark, regist your listening port following below step: 
 
-          ` Clik menu Tools -> Irdeto Deoder -> Add Port `
+           Clik menu Tools -> Irdeto Deoder -> Add Port 
 
-          ` Default port will be added in the port file if your connection used, you can click Default button and Re-launch wireshark. `
+           Default port will be added in the port file if your connection used, you can click Default button and Re-launch wireshark. 
 
-          ` New port can be added by clicking New button, you should set the each port for your connectin. Multiple port can be splited by comma, if continuous number you can use '-' to `
+           New port can be added by clicking New button, you should set the each port for your connectin. Multiple port can be splited by comma, if continuous number you can use '-' to 
 
-          ` set a range(e.g. 4350,4351,4352 you can put 4350-4352 in the text box). `
+           set a range(e.g. 4350,4351,4352 you can put 4350-4352 in the text box). 
 
       4.   Re-launch your wireshark when you finish the port registration.
 
