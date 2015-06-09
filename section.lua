@@ -123,7 +123,7 @@ end
 			if payload_pointer ~= 0 then
 				t:add(f_ts_packet_payload_part_previous_section, buf(5,payload_pointer))
 			end
-			startIndexPayload = 5
+			startIndexPayload = 5 + payload_pointer
 			
 		else
 			startOfNextSectionAt = -1

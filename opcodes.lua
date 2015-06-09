@@ -1298,9 +1298,9 @@ IUC  :   Pairing opcode
 			st:add( f_ifcp_package_descriptor_length, buf(12, 1))
 			st:add( f_ifcp_package_descriptor_ptid, buf(13, 2))
 			st:add( f_ifcp_package_descriptor_nr_of_blocks, buf(15, 2))
-			st:add( f_ifcp_package_descriptor_rfu, buf(16, 1))
-			st:add( f_ifcp_package_descriptor_block_size, buf(16, 1))
-			st:add( f_ifcp_package_descriptor_check_sum, buf(17, 4))
+			st:add( f_ifcp_package_descriptor_rfu, buf(17, 1))
+			st:add( f_ifcp_package_descriptor_block_size, buf(17, 1))
+			st:add( f_ifcp_package_descriptor_check_sum, buf(18, 4))
 		end
 				
 		if ( buf_len - 3 - length > 0) then
@@ -1701,6 +1701,7 @@ IUC  :  ARP Config Opcode
 	
 --[[
 
+0x0c	----------						Date Code Sector Opcode
 0x1a	----------						Time Sync Opcode
 0xfb	----------						Time Stamp Opcode
 0x1d	----------						Time Freshness Opcode
@@ -1735,6 +1736,56 @@ IUC  :  ARP Config Opcode
 
 ---]]	
 
+
+--[[
+
+Smart Card : Date Code Sector Opocde
+
+--]]
+
+	local CCP_PAR_SC_DATE_CODE_SECTOR = Proto("CCP_PAR_SC_DATE_CODE_SECTOR", "Date Code Sector")
+	f_datecode_sector_emm_opcode = ProtoField.uint8("CCP_PAR_SC_DATE_CODE_SECTOR.opcode", "Opcode", base.HEX)
+	f_datecode_sector_length = ProtoField.uint16("CCP_PAR_SC_DATE_CODE_SECTOR.length", "Length", base.DEC)
+	f_datecode_sector_sector_number = ProtoField.uint16("CCP_PAR_SC_DATE_CODE_SECTOR.sector_number", "Sector Number", base.DEC)
+	f_datecode_sector_datecode = ProtoField.uint16("CCP_PAR_SC_DATE_CODE_SECTOR.datecode", "Date Code", base.DEC)
+	
+	CCP_PAR_SC_DATE_CODE_SECTOR.fields = {f_datecode_sector_emm_opcode, f_datecode_sector_length, f_datecode_sector_sector_number, f_datecode_sector_datecode}
+	
+	function CCP_PAR_SC_DATE_CODE_SECTOR.dissector(buf, pkt, root)
+		local opcode = buf(0, 1):uint()
+		if opcode ~= 0x0c then
+			return false
+		end
+
+		local length = buf(1, 1) : uint()
+        local buf_len = buf:len()
+		if buf_len < length + 1 then
+			return false
+		end
+
+		local t= root:add(CCP_PAR_SC_DATE_CODE_SECTOR, buf(0,  2 + length))
+		t:add(f_datecode_sector_emm_opcode, opcode)
+		t:add(f_datecode_sector_length, length)
+		t:add(f_datecode_sector_sector_number, buf(2,1))
+		t:add(f_datecode_sector_datecode, buf(3,2))
+		
+		if ( buf_len - 2 - length > 0) then
+			local next_buf = buf( 2 + length, buf_len - 2 - length)
+			return ccp_table:get_dissector(0xFFFF):call( next_buf:tvb(), pkt, root)
+		end
+
+		return true
+	end
+	
+	ccp_table:add(0x000c, CCP_PAR_SC_DATE_CODE_SECTOR)
+
+	-- register ccp opcodes table
+	ccp_opcodes_protos[0x000c] = {
+						["dis"] = ccp_table:get_dissector(0x000c),
+						["version"] = 1 -- version 1 got 1 byte length para, version 2 got 2
+	}
+	
+	
 --[[
 
 Smart Card : Time Sync Opocde
@@ -3542,7 +3593,7 @@ Smart Card :  Package Initiation Opocde
 	--1,1
 	f_package_level_filter_length = ProtoField.uint8("CCP_PAR_PACKAGE_LEVEL_FILTER.Length", "Length", base.DEC)
 	--2,1 0,6
-	f_package_level_filter_required_pl = ProtoField.bytes("CCP_PAR_PACKAGE_LEVEL_FILTER.required_pl", "Required Package Level", base.HEX)
+	f_package_level_filter_required_pl = ProtoField.uint16("CCP_PAR_PACKAGE_LEVEL_FILTER.required_pl", "Required Package Level", base.DEC)
 	--2,1 6,2
 	f_package_level_filter_grace_duration = ProtoField.uint16("CCP_PAR_PACKAGE_LEVEL_FILTER.grace_duration", "Grace Duration", base.DEC)
 
@@ -3699,7 +3750,7 @@ Smart Card :  Package Initiation Opocde
 	local CCP_PAR_PATCH_LEVEL_FILTER = Proto("CCP_PAR_PATCH_LEVEL_FILTER", "Patch Level Filter Opcode")
 	f_patch_level_filter_opcode = ProtoField.uint8("CCP_PAR_PATCH_LEVEL_FILTER.Opcode", "Opcode", base.HEX)
 	f_patch_level_filter_length = ProtoField.uint8("CCP_PAR_PATCH_LEVEL_FILTER.Length", "Length", base.DEC)
-	f_patch_level_filter_required_patch_level = ProtoField.uint16("CCP_PAR_PATCH_LEVEL_FILTER.required_patch_level", "Required Patch Level", base.HEX)
+	f_patch_level_filter_required_patch_level = ProtoField.uint16("CCP_PAR_PATCH_LEVEL_FILTER.required_patch_level", "Required Patch Level", base.DEC)
 
 	CCP_PAR_PATCH_LEVEL_FILTER.fields = {f_patch_level_filter_opcode, f_patch_level_filter_length, f_patch_level_filter_required_patch_level}
 	
